@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -378,5 +380,32 @@ public class AdvancedUserProtoTest {
         log("clientParsed", clientParsed);
         assertEquals(userToSend, clientParsed);
         assertEquals("mahmoodsaneian1@gmail.com",  clientParsed.getEmailLogin());
+    }
+
+    /**
+     * persistent like storage simulation
+     */
+    @Test
+    public void test11_persistentLikeStorageSimulation() throws Exception {
+        Map<String, byte[]> fakeStore = new ConcurrentHashMap<>();
+
+        AdvancedUserProto.User user = AdvancedUserProto.User.newBuilder()
+                .setId(300)
+                .setName("Stored User")
+                .setNickname("Cache")
+                .build();
+
+        String key = "user:" +  user.getId();
+        fakeStore.put(key, user.toByteArray());
+        log("storedKey", key);
+        log("storedBytesLength", fakeStore.get(key).length);
+
+        // later...
+        byte[] loadedBytes = fakeStore.get(key);
+        assertNotNull(loadedBytes);
+
+        AdvancedUserProto.User loaded =  AdvancedUserProto.User.parseFrom(loadedBytes);
+        log("loaded", loaded);
+        assertEquals(user, loaded);
     }
 }
