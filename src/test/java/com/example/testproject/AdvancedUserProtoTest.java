@@ -197,4 +197,62 @@ public class AdvancedUserProtoTest {
         }
     }
 
+    /**
+     * one of login method
+     */
+    @Test
+    public void test06_oneOfLoginMethod(){
+        AdvancedUserProto.User user1 = AdvancedUserProto.User.newBuilder()
+                .setId(1)
+                .setName("Mahmood Email")
+                .setEmailLogin("mahmoodsaneian1@gmail.com")
+                .build();
+
+        log("user1.loginMethodCase", user1.getLoginMethodCase());
+        log("user1.emailLogin", user1.getEmailLogin());
+
+        assertEquals(AdvancedUserProto.User.LoginMethodCase.EMAIL_LOGIN, user1.getLoginMethodCase());
+        assertEquals("mahmoodsaneian1@gmail.com",  user1.getEmailLogin());
+
+        AdvancedUserProto.User user2 = AdvancedUserProto.User.newBuilder()
+                .setId(2)
+                .setName("Mahmood Phone")
+                .setPhoneLogin(AdvancedUserProto.PhoneNumber.newBuilder()
+                        .setCountry("Iran")
+                        .setNumber("+989188688513").build())
+                .build();
+        log("user2.loginMethodCase", user2.getLoginMethodCase());
+        log("user2.phoneLogin.number", user2.getPhoneLogin().getNumber());
+
+        assertEquals(AdvancedUserProto.User.LoginMethodCase.PHONE_LOGIN, user2.getLoginMethodCase());
+        assertEquals("+989188688513", user2.getPhoneLogin().getNumber());
+
+        // set email then phone
+
+        AdvancedUserProto.User.Builder builder = AdvancedUserProto.User.newBuilder()
+                .setId(3)
+                .setName("Mahmood mixed")
+                .setEmailLogin("before@example.com");
+        assertEquals(AdvancedUserProto.User.LoginMethodCase.EMAIL_LOGIN, builder.getLoginMethodCase());
+
+        builder.setPhoneLogin(AdvancedUserProto.PhoneNumber.newBuilder()
+                .setCountry("IR")
+                .setNumber("+989188688513").build());
+
+        AdvancedUserProto.User user3 = builder.build();
+        log("user3.loginMethodCase", user3.getLoginMethodCase());
+        log("user3.emailLogin_afterPhone", "'" + user3.getEmailLogin() + "'");
+
+        assertEquals(AdvancedUserProto.User.LoginMethodCase.PHONE_LOGIN, user3.getLoginMethodCase());
+        assertEquals("", user3.getEmailLogin());
+
+        // no login info
+        AdvancedUserProto.User user4 = AdvancedUserProto.User.newBuilder()
+                .setId(4)
+                .setName("Mahmood no login")
+                .build();
+
+        assertEquals(AdvancedUserProto.User.LoginMethodCase.LOGINMETHOD_NOT_SET,  user4.getLoginMethodCase());
+    }
+
 }
