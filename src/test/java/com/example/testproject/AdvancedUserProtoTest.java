@@ -299,4 +299,28 @@ public class AdvancedUserProtoTest {
         assertEquals("Jahrom-2", u3.getContact().getAddress());
     }
 
+    /**
+     * unknown enum value + reserialization
+     */
+    @Test
+    public void test08_unknownEnumValueRoundTrip() throws Exception {
+        AdvancedUserProto.User u = AdvancedUserProto.User.newBuilder()
+                .setId(1)
+                .setName("Unknown enum user")
+                .setGenderValue(123)
+                .build();
+
+        log("u.gender", u.getGender());
+        log("u.genderValue", u.getGenderValue());
+
+        assertEquals(AdvancedUserProto.Gender.UNRECOGNIZED, u.getGender());
+        byte[] bytes = u.toByteArray();
+        AdvancedUserProto.User parsed  = AdvancedUserProto.User.parseFrom(bytes);
+
+        log("parsed.gender", parsed.getGender());
+        log("parsed.genderValue", parsed.getGenderValue());
+
+        assertEquals(123, parsed.getGenderValue());
+        assertEquals(AdvancedUserProto.Gender.UNRECOGNIZED, parsed.getGender());
+    }
 }
