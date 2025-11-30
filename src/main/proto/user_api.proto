@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package userapi;
+
+option java_package = "com.example.testproject.proto";
+option java_outer_classname = "UserApiProto";
+
+message User {
+  int64 id = 1;
+  string name = 2;
+  string email = 3;
+  optional string nickname = 4;
+  repeated string tags = 5;
+}
