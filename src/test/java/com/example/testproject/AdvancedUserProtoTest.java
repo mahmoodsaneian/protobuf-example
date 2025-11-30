@@ -87,7 +87,7 @@ public class AdvancedUserProtoTest {
      * optional fields
      */
     @Test
-    public void test03_optionalFields(){
+    public void test03_optionalFields() {
         // no nickname
         AdvancedUserProto.User u1 = AdvancedUserProto.User.newBuilder()
                 .setId(1)
@@ -107,7 +107,7 @@ public class AdvancedUserProtoTest {
         log("u2.nickname", "'" + u2.getNickname() + "'");
 
         assertTrue(u2.hasNickname());
-        assertEquals("",  u2.getNickname());
+        assertEquals("", u2.getNickname());
 
 
         // nickname value + clear
@@ -138,7 +138,7 @@ public class AdvancedUserProtoTest {
      * repeated fields
      */
     @Test
-    public void test04_repeatedFields(){
+    public void test04_repeatedFields() {
         AdvancedUserProto.User user = AdvancedUserProto.User.newBuilder()
                 .setId(10)
                 .setName("Mahmood repeated")
@@ -170,7 +170,7 @@ public class AdvancedUserProtoTest {
      * unknown enum value
      */
     @Test
-    public void test05_enums(){
+    public void test05_enums() {
         AdvancedUserProto.User user = AdvancedUserProto.User.newBuilder()
                 .setId(1)
                 .setName("Mahmood enum")
@@ -191,7 +191,7 @@ public class AdvancedUserProtoTest {
         assertEquals(99, unknown.getGenderValue());
         assertEquals(AdvancedUserProto.Gender.UNRECOGNIZED, unknown.getGender());
 
-        switch (unknown.getGender()){
+        switch (unknown.getGender()) {
             case MALE, FEMALE, OTHER, GENDER_UNSPECIFIED -> fail("Should be UNRECOGNIZED");
             case UNRECOGNIZED -> log("enum handling", "Unknown gender value at runtime");
         }
@@ -201,7 +201,7 @@ public class AdvancedUserProtoTest {
      * one of login method
      */
     @Test
-    public void test06_oneOfLoginMethod(){
+    public void test06_oneOfLoginMethod() {
         AdvancedUserProto.User user1 = AdvancedUserProto.User.newBuilder()
                 .setId(1)
                 .setName("Mahmood Email")
@@ -212,7 +212,7 @@ public class AdvancedUserProtoTest {
         log("user1.emailLogin", user1.getEmailLogin());
 
         assertEquals(AdvancedUserProto.User.LoginMethodCase.EMAIL_LOGIN, user1.getLoginMethodCase());
-        assertEquals("mahmoodsaneian1@gmail.com",  user1.getEmailLogin());
+        assertEquals("mahmoodsaneian1@gmail.com", user1.getEmailLogin());
 
         AdvancedUserProto.User user2 = AdvancedUserProto.User.newBuilder()
                 .setId(2)
@@ -252,7 +252,51 @@ public class AdvancedUserProtoTest {
                 .setName("Mahmood no login")
                 .build();
 
-        assertEquals(AdvancedUserProto.User.LoginMethodCase.LOGINMETHOD_NOT_SET,  user4.getLoginMethodCase());
+        assertEquals(AdvancedUserProto.User.LoginMethodCase.LOGINMETHOD_NOT_SET, user4.getLoginMethodCase());
+    }
+
+    /**
+     * nested messages
+     */
+    @Test
+    public void test07_nestedMessages() {
+        AdvancedUserProto.ContactInfo contact = AdvancedUserProto.ContactInfo.newBuilder()
+                .setAddress("Jahrom")
+                .setZip("74188")
+                .build();
+
+        AdvancedUserProto.User u1 = AdvancedUserProto.User.newBuilder()
+                .setId(1)
+                .setName("Mahmood with contact")
+                .setContact(contact)
+                .build();
+
+        log("u1.contact.address", u1.getContact().getAddress());
+        assertEquals("Jahrom", u1.getContact().getAddress());
+
+        AdvancedUserProto.User u2 = AdvancedUserProto.User.newBuilder()
+                .setId(2)
+                .setName("Mahmood without contact")
+                .build();
+
+        AdvancedUserProto.ContactInfo c2 = u2.getContact();
+        log("u2.contact", c2);
+        log("u2.contact.address", "'" + c2.getAddress() + "'");
+        assertEquals("", c2.getAddress());
+
+        // modify
+        AdvancedUserProto.User.Builder builder = AdvancedUserProto.User.newBuilder()
+                .setId(3)
+                .setName("Mahmood builder");
+
+        builder.getContactBuilder()
+                .setAddress("Jahrom-2")
+                .setZip("46893");
+
+        AdvancedUserProto.User u3 = builder.build();
+
+        log("u3.contact", u3.getContact());
+        assertEquals("Jahrom-2", u3.getContact().getAddress());
     }
 
 }
