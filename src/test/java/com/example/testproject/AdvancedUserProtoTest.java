@@ -316,7 +316,7 @@ public class AdvancedUserProtoTest {
 
         assertEquals(AdvancedUserProto.Gender.UNRECOGNIZED, u.getGender());
         byte[] bytes = u.toByteArray();
-        AdvancedUserProto.User parsed  = AdvancedUserProto.User.parseFrom(bytes);
+        AdvancedUserProto.User parsed = AdvancedUserProto.User.parseFrom(bytes);
 
         log("parsed.gender", parsed.getGender());
         log("parsed.genderValue", parsed.getGenderValue());
@@ -357,5 +357,26 @@ public class AdvancedUserProtoTest {
         assertEquals(user.getGender(), parsed.getGender());
         assertEquals(user.getName(), parsed.getName());
         assertEquals(user.getTagsList(), parsed.getTagsList());
+    }
+
+    /**
+     * HTTP-like send/receive simulation
+     */
+    @Test
+    public void test10_httpLikeSendReceiveSimulation() throws Exception {
+        AdvancedUserProto.User userToSend = AdvancedUserProto.User.newBuilder()
+                .setId(200)
+                .setName("HttpUser")
+                .setEmailLogin("mahmoodsaneian1@gmail.com")
+                .build();
+
+        byte[] body = userToSend.toByteArray();
+        log("http.responseBody.size", body.length);
+
+        //"Client" receives bytes and parses
+        AdvancedUserProto.User clientParsed =  AdvancedUserProto.User.parseFrom(body);
+        log("clientParsed", clientParsed);
+        assertEquals(userToSend, clientParsed);
+        assertEquals("mahmoodsaneian1@gmail.com",  clientParsed.getEmailLogin());
     }
 }
