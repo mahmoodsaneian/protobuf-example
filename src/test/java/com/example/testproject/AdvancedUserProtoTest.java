@@ -3,6 +3,7 @@ package com.example.testproject;
 import com.example.testproject.proto.UserApiProto;
 import com.example.testproject.proto.advanced.AdvancedUserProto;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -322,5 +323,39 @@ public class AdvancedUserProtoTest {
 
         assertEquals(123, parsed.getGenderValue());
         assertEquals(AdvancedUserProto.Gender.UNRECOGNIZED, parsed.getGender());
+    }
+
+    /**
+     * JSON <-> protobuf using json format
+     */
+    @Test
+    public void test09_jsonFormatRoundTrip() throws Exception {
+        AdvancedUserProto.User user = AdvancedUserProto.User.newBuilder()
+                .setId(100)
+                .setName("Mahmood Json")
+                .setNickname("Mj")
+                .setGender(AdvancedUserProto.Gender.FEMALE)
+                .addTags("vip")
+                .build();
+
+        String json = JsonFormat.printer()
+                .includingDefaultValueFields()
+                .print(user);
+
+        log("json", json);
+
+        AdvancedUserProto.User.Builder builder = AdvancedUserProto.User.newBuilder();
+        JsonFormat.parser()
+                .ignoringUnknownFields()
+                .merge(json, builder);
+
+        AdvancedUserProto.User parsed = builder.build();
+        log("parsedFromJson", parsed);
+
+        assertEquals(user.getId(), parsed.getId());
+        assertEquals(user.getNickname(), parsed.getNickname());
+        assertEquals(user.getGender(), parsed.getGender());
+        assertEquals(user.getName(), parsed.getName());
+        assertEquals(user.getTagsList(), parsed.getTagsList());
     }
 }
