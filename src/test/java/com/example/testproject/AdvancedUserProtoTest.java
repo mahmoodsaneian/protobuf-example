@@ -1,5 +1,6 @@
 package com.example.testproject;
 
+import com.example.testproject.proto.UserApiProto;
 import com.example.testproject.proto.advanced.AdvancedUserProto;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.junit.jupiter.api.Test;
@@ -163,4 +164,37 @@ public class AdvancedUserProtoTest {
         assertEquals(List.of("vip", "beta", "friend", "tester", "vip", "newTag"),
                 user2.getTagsList());
     }
+
+    /**
+     * enums
+     * unknown enum value
+     */
+    @Test
+    public void test05_enums(){
+        AdvancedUserProto.User user = AdvancedUserProto.User.newBuilder()
+                .setId(1)
+                .setName("Mahmood enum")
+                .setGender(AdvancedUserProto.Gender.OTHER)
+                .build();
+
+        log("u.gender", user.getGender());
+        log("u.genderValue", user.getGenderValue());
+
+        assertEquals(AdvancedUserProto.Gender.OTHER, user.getGender());
+        assertEquals(AdvancedUserProto.Gender.OTHER.getNumber(), user.getGenderValue());
+
+        // unknown enum
+        AdvancedUserProto.User unknown = user.toBuilder().setGenderValue(99).build();
+        log("uUnknown.genderValue", unknown.getGenderValue());
+        log("uUnknown.gender", unknown.getGender());
+
+        assertEquals(99, unknown.getGenderValue());
+        assertEquals(AdvancedUserProto.Gender.UNRECOGNIZED, unknown.getGender());
+
+        switch (unknown.getGender()){
+            case MALE, FEMALE, OTHER, GENDER_UNSPECIFIED -> fail("Should be UNRECOGNIZED");
+            case UNRECOGNIZED -> log("enum handling", "Unknown gender value at runtime");
+        }
+    }
+
 }
