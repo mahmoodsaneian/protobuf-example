@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package versioning;
+
+option java_package = "com.example.testproject.proto.versioning";
+option java_outer_classname = "VersioningProto";
+
+message UserV1 {
+  int64 id = 1;
+  string name = 2;
+  GenderV1 gender = 3;
+}
+
+enum GenderV1 {
+  GENDER_UNSPECIFIED_V1 = 0;
+  MALE_V1 = 1;
+  FEMALE_V1 = 2;
+}
+
+message UserV2 {
+  int64 id = 1;
+  string name = 2;
+  GenderV2 gender = 3;
+  string nickname = 4;
+}
+
+enum GenderV2 {
+  GENDER_UNSPECIFIED = 0;
+  MALE_V2 = 1;
+  FEMALE_V2 = 2;
+  OTHER_V2 = 3;
+}
+
